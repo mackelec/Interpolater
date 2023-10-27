@@ -1,4 +1,3 @@
-// Interpolator.h
 #ifndef Interpolator_h
 #define Interpolator_h
 
@@ -10,6 +9,9 @@ public:
     : xValues(xValues), yValues(yValues), numPoints(numPoints) {}
 
     int interpolate(int x) {
+        if (x <= xValues[0]) return yValues[0];  // Handle lower boundary
+        if (x >= xValues[numPoints - 1]) return yValues[numPoints - 1];  // Handle upper boundary
+
         int index = findNearestLowerIndex(x);
         int lowerX = xValues[index];
         int upperX = xValues[index + 1];
@@ -25,14 +27,12 @@ private:
     int numPoints;
 
     int findNearestLowerIndex(int value) {
-        int index = 0;
         for (int i = 0; i < numPoints - 1; i++) {
             if (xValues[i + 1] > value) {
-                index = i;
-                break;
+                return i;
             }
         }
-        return index;
+        return numPoints - 2;  // Default to the second last index, but it should not reach this due to the boundary checks in `interpolate`
     }
 };
 
